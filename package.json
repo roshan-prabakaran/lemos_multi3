@@ -6,8 +6,7 @@
     "dev": "next dev",
     "build": "npx next build",
     "start": "next start -p ${PORT:-3000}",
-    "lint": "next lint",
-    "prebuild": "npm ci"
+    "lint": "next lint"
   },
   "dependencies": {
     "next": "15.1.3",
