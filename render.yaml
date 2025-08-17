@@ -1,0 +1,28 @@
+services:
+  - type: web
+    name: lemos-dashboard
+    env: node
+    plan: free
+    buildCommand: npm ci && npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: TWILIO_ACCOUNT_SID
+        sync: false
+      - key: TWILIO_AUTH_TOKEN
+        sync: false
+      - key: TWILIO_FROM
+        sync: false
+      - key: AREA_1_CONTACTS
+        sync: false
+      - key: AREA_2_CONTACTS
+        sync: false
+      - key: AREA_3_CONTACTS
+        sync: false
+      - key: EMERGENCY_CONTACTS
+        sync: false
+      - key: NEXT_PUBLIC_APP_URL
+        sync: false

@@ -1,0 +1,31 @@
+LEMOS Multi-Area Deployment Guide
+================================
+
+To monitor multiple areas, you need separate ESP32 devices:
+
+AREA 1 ESP32:
+- Flash: lemos_esp32_area1.ino
+- areaId = "1"
+- Sensors: MQ-4, MQ-7, DHT11, Ultrasonic, etc.
+
+AREA 2 ESP32:
+- Flash: lemos_esp32_area2.ino  
+- areaId = "2"
+- Same sensor configuration
+
+AREA 3 ESP32:
+- Flash: lemos_esp32_area3.ino
+- areaId = "3" 
+- Same sensor configuration
+
+Each ESP32 will send data to the same Flask server but with different area_id values, allowing the system to track readings from all three areas separately.
+
+WiFi Configuration:
+- All ESP32s can use the same WiFi network
+- All send data to the same server URL
+- Server will differentiate by area_id field
+
+Hardware Setup:
+- Each area needs its own complete sensor setup
+- Each ESP32 connects to sensors in its designated area
+- LCD displays will show the respective area number

@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LEMOS - Multi-Area Gas Monitoring System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/date-fns@2.29.3/index.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <h1 class="logo">LEMOS</h1>
+                <p class="subtitle">Multi-Area Gas Monitoring & Forecasting System</p>
+                <div class="status-indicator">
+                    <span class="status-dot" id="connectionStatus"></span>
+                    <span id="connectionText">Connecting...</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Alert Banner -->
+        <div class="alert-banner" id="alertBanner" style="display: none;">
+            <div class="alert-content">
+                <span class="alert-icon">⚠️</span>
+                <span class="alert-message" id="alertMessage"></span>
+                <button class="alert-close" onclick="closeAlert()">×</button>
+            </div>
+        </div>
+
+        <!-- Area Selection -->
+        <div class="area-selector">
+            <button class="area-btn active" data-area="1">Area 1</button>
+            <button class="area-btn" data-area="2">Area 2</button>
+            <button class="area-btn" data-area="3">Area 3</button>
+            <button class="area-btn" data-area="all">All Areas</button>
+        </div>
+
+        <!-- Main Dashboard Grid -->
+        <div class="dashboard-grid">
+            <!-- Current Readings -->
+            <div class="card current-readings">
+                <h2>Current Readings</h2>
+                <div class="readings-grid">
+                    <div class="reading-item">
+                        <div class="reading-label">Methane (CH₄)</div>
+                        <div class="reading-value" id="methaneValue">-- ppm</div>
+                        <div class="reading-status" id="methaneStatus">Normal</div>
+                    </div>
+                    <div class="reading-item">
+                        <div class="reading-label">Carbon Monoxide (CO)</div>
+                        <div class="reading-value" id="coValue">-- ppm</div>
+                        <div class="reading-status" id="coStatus">Normal</div>
+                    </div>
+                    <div class="reading-item">
+                        <div class="reading-label">Temperature</div>
+                        <div class="reading-value" id="tempValue">-- °C</div>
+                        <div class="reading-status" id="tempStatus">Normal</div>
+                    </div>
+                    <div class="reading-item">
+                        <div class="reading-label">Humidity</div>
+                        <div class="reading-value" id="humidityValue">-- %</div>
+                        <div class="reading-status" id="humidityStatus">Normal</div>
+                    </div>
+                    <div class="reading-item">
+                        <div class="reading-label">Water Level</div>
+                        <div class="reading-value" id="waterValue">-- %</div>
+                        <div class="reading-status" id="waterStatus">Normal</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Gas Levels Chart -->
+            <div class="card chart-container">
+                <h2>Gas Levels Trend (24h)</h2>
+                <canvas id="gasChart"></canvas>
+            </div>
+
+            <!-- Environmental Chart -->
+            <div class="card chart-container">
+                <h2>Environmental Conditions</h2>
+                <canvas id="envChart"></canvas>
+            </div>
+
+            <!-- Forecast Chart -->
+            <div class="card chart-container">
+                <h2>48-Hour Forecast</h2>
+                <canvas id="forecastChart"></canvas>
+                <div class="forecast-info">
+                    <p>ML-powered predictions based on historical patterns</p>
+                </div>
+            </div>
+
+            <!-- Recent Alerts -->
+            <div class="card alerts-panel">
+                <h2>Recent Alerts</h2>
+                <div class="alerts-list" id="alertsList">
+                    <div class="no-alerts">No recent alerts</div>
+                </div>
+            </div>
+
+            <!-- System Status -->
+            <div class="card system-status">
+                <h2>System Status</h2>
+                <div class="status-grid">
+                    <div class="status-item">
+                        <div class="status-label">Area 1 Sensors</div>
+                        <div class="status-indicator online" id="area1Status">Online</div>
+                    </div>
+                    <div class="status-item">
+                        <div class="status-label">Area 2 Sensors</div>
+                        <div class="status-indicator online" id="area2Status">Online</div>
+                    </div>
+                    <div class="status-item">
+                        <div class="status-label">Area 3 Sensors</div>
+                        <div class="status-indicator online" id="area3Status">Online</div>
+                    </div>
+                    <div class="status-item">
+                        <div class="status-label">ML Forecasting</div>
+                        <div class="status-indicator online" id="mlStatus">Active</div>
+                    </div>
+                    <div class="status-item">
+                        <div class="status-label">SMS Alerts</div>
+                        <div class="status-indicator online" id="smsStatus">Enabled</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Settings Modal -->
+        <div class="modal" id="settingsModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Alert Thresholds</h2>
+                    <button class="modal-close" onclick="closeSettings()">×</button>
+                </div>
+                <div class="modal-body">
+                    <div class="threshold-setting">
+                        <label>Methane Threshold (ppm)</label>
+                        <input type="number" id="methaneThreshold" value="1000">
+                    </div>
+                    <div class="threshold-setting">
+                        <label>CO Threshold (ppm)</label>
+                        <input type="number" id="coThreshold" value="50">
+                    </div>
+                    <div class="threshold-setting">
+                        <label>Temperature Threshold (°C)</label>
+                        <input type="number" id="tempThreshold" value="35">
+                    </div>
+                    <div class="threshold-setting">
+                        <label>Humidity Threshold (%)</label>
+                        <input type="number" id="humidityThreshold" value="80">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn-secondary" onclick="closeSettings()">Cancel</button>
+                    <button class="btn-primary" onclick="saveThresholds()">Save</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Settings Button -->
+        <button class="settings-btn" onclick="openSettings()">⚙️</button>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+</body>
+</html>
